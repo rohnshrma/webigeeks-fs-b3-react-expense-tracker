@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Form from "./Components/Form";
+import Expense from "./Components/Expense";
 
-function App() {
+const App = () => {
+  const [expenses, setExpenses] = useState([]);
+
+  const addExpenseHandler = (expenseObj) => {
+    console.log(expenseObj);
+    setExpenses((prevExpenses) => {
+      return [expenseObj, ...prevExpenses];
+    });
+  };
+  const deleteExpenseHandler = (id) => {
+    setExpenses((prevExpenses) => {
+      return prevExpenses.filter((expenseObj, index) => {
+        return index !== id;
+      });
+    });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Form onAdd={addExpenseHandler} />
+      {expenses.map((expenseObj, index) => {
+        return (
+          <Expense
+            name={expenseObj.name}
+            amount={expenseObj.amount}
+            key={index}
+            id={index}
+            onDelete={deleteExpenseHandler}
+          />
+        );
+      })}
     </div>
   );
-}
+};
 
 export default App;
