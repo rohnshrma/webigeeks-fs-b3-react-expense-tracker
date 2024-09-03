@@ -1,48 +1,56 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
+
+const formReducer = (state, action) => {
+  if (action.type === "NAME_CHANGE") {
+    return {
+      name: action.payload,
+      amount: state.amount,
+      category: state.category,
+    };
+  }
+  if (action.type === "AMOUNT_CHANGE") {
+    return {
+      name: state.name,
+      amount: action.payload,
+      category: state.category,
+    };
+  }
+  if (action.type === "CATEGORY_CHANGE") {
+    return {
+      name: state.name,
+      amount: state.amount,
+      category: action.payload,
+    };
+  }
+  return initialState;
+};
+
+const initialState = {
+  name: "",
+  amount: "",
+  category: "",
+};
 
 const Form = (props) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    amount: "",
-    category: "",
-  });
+  const [formState, dispatch] = useReducer(formReducer, initialState);
 
   const nameChangeHandler = (e) => {
     const nameText = e.target.value;
-    setFormData((prevExpense) => {
-      console.log("prevExpense =>", prevExpense);
 
-      return {
-        name: nameText,
-        amount: prevExpense.amount,
-      };
-    });
+    dispatch({ type: "NAME_CHANGE", payload: nameText });
   };
   const amountChangeHandler = (e) => {
     const amountText = e.target.value;
-    setFormData((prevExpense) => {
-      console.log("prevExpense =>", prevExpense);
-      return {
-        name: prevExpense.name,
-        amount: amountText,
-      };
-    });
+    dispatch({ type: "AMOUNT_CHANGE", payload: amountText });
   };
   const categoryChangeHandler = (e) => {
     const categoryText = e.target.value;
-    setFormData((prevExpense) => {
-      console.log("prevExpense =>", prevExpense);
-      return {
-        name: prevExpense.name,
-        amount: prevExpense.amount,
-        category: categoryText,
-      };
-    });
+    dispatch({ type: "CATEGORY_CHANGE", payload: categoryText });
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
-    props.onAdd(formData);
+    props.onAdd(formState);
   };
 
   //   const [nameInput, setNameInput] = useState("");
@@ -86,7 +94,7 @@ const Form = (props) => {
           />
         </div>
         <div className="form-group">
-          <select name="category">
+          <select name="category" onChange={categoryChangeHandler}>
             <option disabled selected>
               Category
             </option>
